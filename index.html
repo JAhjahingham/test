@@ -10,12 +10,17 @@
 
         body {
             display: flex;
-            /* Changed to column to allow ad banner above the game-container */
+            /* Changed to align content to the TOP */
+            justify-content: flex-start;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            
+            /* Remove space from the top and define height */
+            height: 100vh; 
+            min-height: 100%;
             margin: 0;
+            padding-top: 0; 
+            
+            align-items: center;
             background: linear-gradient(135deg, #87CEEB 0%, #1E90FF 100%); /* Sky gradient */
             font-family: 'Press Start 2P', cursive;
             overflow: hidden; /* Prevent scrolling */
@@ -23,34 +28,34 @@
 
         /* ------------------ ADJUSTED AD BANNER STYLES (PC/DEFAULT) ------------------ */
         #ad-banner {
-            width: 95%; /* Slightly smaller relative width */
-            max-width: 400px; /* Reduced maximum desktop width */
-            background-color: #34495e; /* Dark background for contrast */
-            padding: 5px 0; /* Reduced vertical padding */
+            width: 95%; 
+            max-width: 400px; 
+            background-color: #34495e; 
+            padding: 5px 0; 
             text-align: center;
-            margin-bottom: 10px; /* Reduced space between ad and game container */
-            border: 2px solid #f39c12; /* Thinner border */
-            border-radius: 6px; /* Slightly smaller radius */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Softer shadow */
+            margin-bottom: 10px; 
+            margin-top: 10px; /* Added slight margin from top of viewport */
+            border: 2px solid #f39c12; 
+            border-radius: 6px; 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
             transition: transform 0.2s;
         }
 
         #ad-banner:hover {
-            transform: translateY(-1px); /* Slight lift on hover */
+            transform: translateY(-1px); 
         }
 
         #ad-banner a {
             text-decoration: none;
             color: #ecf0f1;
-            font-size: 0.65em; /* Smaller base font size */
+            font-size: 0.65em; 
             display: block;
-            line-height: 1.2; /* Tighter line spacing */
+            line-height: 1.2; 
         }
 
         #ad-banner strong {
             display: block;
             font-size: 1.0em;
-            /* GREEN FOR PC/DEFAULT */
             color: #2ecc71; 
             text-shadow: 1px 1px 0px #1c2833;
             margin: 2px 0;
@@ -69,6 +74,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            /* Allow game container to take up remaining vertical space */
+            flex-grow: 1; 
         }
 
         canvas {
@@ -154,16 +161,16 @@
         /* Responsive adjustments for smaller screens */
         @media (max-width: 600px) {
              #ad-banner {
-                margin-bottom: 10px;
-                padding: 5px 0;
+                margin-bottom: 5px; /* Reduced vertical space */
+                margin-top: 5px; /* Reduced vertical space */
+                padding: 4px 0;
                 width: 90%;
             }
             #ad-banner a {
-                font-size: 0.6em; /* Even smaller font on tiny screens */
+                font-size: 0.6em; 
             }
             #ad-banner strong {
                 font-size: 0.8em;
-                /* REPEAT GREEN COLOR FOR MOBILE OVERRIDE */
                 color: #2ecc71; 
             }
             #score-display {
@@ -171,7 +178,6 @@
                 top: 15px;
             }
             #game-container {
-                /* Reduced margin for better use of space */
                 padding: 10px;
             }
             #message-box {
