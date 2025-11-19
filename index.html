@@ -235,7 +235,7 @@
         // --- Game Constants ---
         const LOGICAL_WIDTH = 480; 
         const LOGICAL_HEIGHT = 700; 
-        const BIRD_RADIUS = 15; // This is the collision radius, not the visual size of the image
+        const BIRD_RADIUS = 15; 
         const PIPE_WIDTH = 50;
         const PIPE_GAP = 150;
         const PIPE_SPEED = 2;
@@ -246,6 +246,263 @@
 
         // --- Image for the Bird ---
         const bigfootImage = new Image();
-        // The base64 data URI of your provided image
-        bigfootImage.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAQAAABemQqFAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfoCx0VNRwEw59BAAAFfElEQVR42u2cW2wUVRiAn5nN7LpQ4G0rUChQ4G1bUBARi2tG8qgJEYjGJDGNJhIjBhPxuJjXBCQeE028kCYmJhNf8Q4oGBN/E41oIgaCQgJ4w8E8xJbL9tW5hT13ZrC9d+PZt2t/aG+bQ9eZe2Zz3e/M7szpXFkYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGFgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBsY
-http://googleusercontent.com/image_generation_content/0
+        // **CORRECTED:** Using the correct file URL for the uploaded image
+        bigfootImage.src = 'Gemini_Generated_Image_eueameeueameeuea.jpg-7c2a5da0-acf0-4f83-9ece-968e26cb5440';
+        
+        // Define the dimensions the image will be drawn at
+        const bigfootSize = 40; 
+        
+        // Flag to ensure the game doesn't start until the image is loaded
+        let imageLoaded = false;
+        bigfootImage.onload = () => {
+            imageLoaded = true;
+            console.log("Bigfoot image loaded.");
+            // Only call resetGame() once the image is ready
+            resetGame();
+        };
+
+        // --- Game State ---
+        let bird;
+        let pipes = [];
+        let score = 0;
+        let highScore = 0; 
+        let isGameOver = false;
+        let frameCount = 0;
+        let gameLoopId;
+
+        // --- Utility Functions ---
+
+        function loadHighScore() {
+            const storedScore = localStorage.getItem(HIGH_SCORE_KEY);
+            highScore = storedScore ? parseInt(storedScore, 10) : 0;
+        }
+
+        function resizeCanvas() {
+            canvas.width = LOGICAL_WIDTH;
+            canvas.height = LOGICAL_HEIGHT;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+
+        // --- Game Objects ---
+
+        class Bird {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.velocity = 0;
+                this.radius = BIRD_RADIUS; 
+            }
+
+            draw() {
+                if (imageLoaded) {
+                    // Draw the Bigfoot image centered on the bird's collision point (this.x, this.y)
+                    // The image is drawn from the top-left corner, so we subtract half the size from x and y
+                    const drawX = this.x - bigfootSize / 2;
+                    const drawY = this.y - bigfootSize / 2;
+
+                    // Draw the image
+                    ctx.drawImage(bigfootImage, drawX, drawY, bigfootSize, bigfootSize);
+                } else {
+                    // Fallback (should not happen after onload)
+                    ctx.fillStyle = 'black'; 
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            update() {
+                this.velocity += GRAVITY;
+                this.y += this.velocity;
+            }
+
+            flap() {
+                if (!isGameOver) {
+                    this.velocity = JUMP_VELOCITY;
+                }
+            }
+        }
+
+        class Pipe {
+            constructor(x, gapY) {
+                this.x = x;
+                this.width = PIPE_WIDTH;
+                this.gapY = gapY; 
+                this.gap = PIPE_GAP;
+                this.passed = false;
+            }
+
+            draw() {
+                ctx.fillStyle = '#2ecc71'; 
+                
+                ctx.fillRect(this.x, 0, this.width, this.gapY - this.gap / 2);
+                ctx.fillRect(this.x, this.gapY + this.gap / 2, this.width, LOGICAL_HEIGHT - (this.gapY + this.gap / 2));
+
+                ctx.strokeStyle = '#16a085';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(this.x, 0, this.width, this.gapY - self.gap / 2);
+                ctx.strokeRect(this.x, this.gapY + self.gap / 2, this.width, LOGICAL_HEIGHT - (this.gapY + self.gap / 2));
+            }
+
+            update() {
+                this.x -= PIPE_SPEED;
+            }
+        }
+
+
+        // --- Game Logic ---
+
+        function drawFloor() {
+            const floorHeight = 100;
+            ctx.fillStyle = '#2c3e50'; 
+            ctx.fillRect(0, LOGICAL_HEIGHT - floorHeight, LOGICAL_WIDTH, floorHeight);
+
+            ctx.fillStyle = '#27ae60';
+            ctx.fillRect(0, LOGICAL_HEIGHT - floorHeight, LOGICAL_WIDTH, 10);
+        }
+
+        function checkCollisions() {
+            const floorThreshold = LOGICAL_HEIGHT - 90; 
+
+            if (bird.y - bird.radius <= 0 || bird.y + bird.radius >= floorThreshold) { 
+                endGame();
+                return;
+            }
+
+            for (let i = 0; i < pipes.length; i++) {
+                const p = pipes[i];
+
+                if (bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + p.width) {
+                    const topPipeBottomY = p.gapY - p.gap / 2;
+                    const bottomPipeTopY = p.gapY + p.gap / 2;
+
+                    if (bird.y - bird.radius < topPipeBottomY || bird.y + bird.radius > bottomPipeTopY) {
+                        endGame();
+                        return;
+                    }
+
+                    if (!p.passed && bird.x > p.x + p.width) {
+                        score++;
+                        p.passed = true;
+                        scoreDisplay.textContent = score;
+                    }
+                }
+            }
+        }
+
+        function spawnPipe() {
+            const minGapY = 150;
+            const maxGapY = LOGICAL_HEIGHT - 150 - 90; 
+
+            const randomGapY = Math.floor(Math.random() * (maxGapY - minGapY + 1)) + minGapY;
+            pipes.push(new Pipe(LOGICAL_WIDTH, randomGapY));
+        }
+
+        function updateGame() {
+            frameCount++;
+            bird.update();
+
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                pipes[i].update();
+                if (pipes[i].x + pipes[i].width < 0) {
+                    pipes.splice(i, 1);
+                }
+            }
+
+            if (frameCount % PIPE_SPAWN_INTERVAL === 0) {
+                spawnPipe();
+            }
+
+            checkCollisions();
+        }
+
+        function drawGame() {
+            ctx.fillStyle = '#70c5ce';
+            ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+
+            pipes.forEach(p => p.draw());
+            drawFloor();
+            bird.draw();
+        }
+
+        function gameLoop() {
+            if (isGameOver) {
+                cancelAnimationFrame(gameLoopId);
+                return;
+            }
+
+            updateGame();
+            drawGame();
+
+            gameLoopId = requestAnimationFrame(gameLoop);
+        }
+
+        function endGame() {
+            isGameOver = true;
+            
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem(HIGH_SCORE_KEY, highScore);
+                document.getElementById('message-title').textContent = "NEW HIGH SCORE!";
+                document.getElementById('message-title').style.color = "#2980b9"; 
+            } else {
+                document.getElementById('message-title').textContent = "GAME OVER!";
+                document.getElementById('message-title').style.color = "#d35400"; 
+            }
+
+            finalScoreSpan.textContent = score;
+            highScoreDisplaySpan.textContent = highScore; 
+            messageBox.style.display = 'block';
+        }
+
+        function resetGame() {
+            if (!imageLoaded) return; // Prevent reset until image is ready
+
+            isGameOver = false;
+            score = 0;
+            frameCount = 0;
+            scoreDisplay.textContent = score;
+            pipes = [];
+            bird = new Bird(LOGICAL_WIDTH / 4, LOGICAL_HEIGHT / 2); 
+            
+            highScoreDisplaySpan.textContent = highScore; 
+
+            messageBox.style.display = 'none';
+
+            gameLoopId = requestAnimationFrame(gameLoop);
+        }
+
+
+        // --- Event Listeners and Initialization ---
+
+        function handleFlap(event) {
+            if (event.type === 'touchstart') {
+                event.preventDefault();
+            }
+            if (isGameOver) {
+                return; 
+            }
+            bird.flap();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); 
+                handleFlap(e);
+            }
+        });
+        canvas.addEventListener('mousedown', handleFlap);
+        canvas.addEventListener('touchstart', handleFlap);
+        restartButton.addEventListener('click', resetGame);
+
+
+        window.onload = function() {
+            resizeCanvas();
+            loadHighScore(); 
+            // resetGame is now called inside bigfootImage.onload
+        };
+
+    </script>
+</body>
+</html>
