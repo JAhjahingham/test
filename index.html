@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flappy Bird Clone</title>
-    <style>
+    <title>Flappy Bigfoot</title> <style>
         /* Base styling and font */
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
@@ -31,7 +30,7 @@
             background-color: #34495e; 
             padding: 5px 0; 
             text-align: center;
-            margin-bottom: 5px; /* Reduced margin */
+            margin-bottom: 5px; 
             margin-top: 5px; 
             border: 2px solid #f39c12; 
             border-radius: 6px; 
@@ -51,12 +50,21 @@
             line-height: 1.2; 
         }
 
+        #ad-banner a p:first-of-type {
+            font-size: 0.5em; 
+            margin-bottom: 2px;
+        }
+
         #ad-banner strong {
             display: block;
-            font-size: 1.0em;
+            font-size: 0.65em; 
             color: #2ecc71; 
             text-shadow: 1px 1px 0px #1c2833;
             margin: 2px 0;
+        }
+
+        #ad-banner a p:last-of-type {
+            margin-top: 2px;
         }
         /* ------------------ END AD BANNER STYLES ------------------ */
 
@@ -67,9 +75,7 @@
             background: #3c3c3c; 
             border-radius: 12px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 0 5px rgba(255, 255, 255, 0.2);
-            /* GREATLY REDUCED PADDING to make canvas fill more */
             padding: 5px; 
-            /* Removed max-width to allow better filling on large screens */
             width: 95vw; 
             max-height: 95vh; 
             display: flex;
@@ -83,8 +89,7 @@
             display: block;
             border-radius: 8px;
             touch-action: manipulation; 
-            width: 100%; /* Fill container width */
-            /* Use a common ratio for Flappy Bird to ensure it looks right */
+            width: 100%; 
             aspect-ratio: 480 / 700; 
             border: 4px solid #1c2833;
         }
@@ -92,12 +97,11 @@
 
         #score-display {
             position: absolute;
-            top: 15px; /* Adjusted position due to reduced container padding */
+            top: 15px; 
             left: 50%;
             transform: translateX(-50%);
             color: #fff;
             text-shadow: 3px 3px 0px #1c2833;
-            /* Using a relative font size so it scales better with canvas */
             font-size: 5vw; 
             z-index: 10;
             pointer-events: none;
@@ -171,12 +175,15 @@
             #ad-banner a {
                 font-size: 0.6em; 
             }
+            #ad-banner a p:first-of-type {
+                font-size: 0.45em; 
+            }
             #ad-banner strong {
-                font-size: 0.8em;
+                font-size: 0.6em;
                 color: #2ecc71; 
             }
             #score-display {
-                font-size: 7vw; /* Increased relative size for mobile score */
+                font-size: 7vw; 
                 top: 10px;
             }
             #game-container {
@@ -225,15 +232,15 @@
         const restartButton = document.getElementById('restart-button');
 
         // --- Game Constants ---
-        const LOGICAL_WIDTH = 480; // The fixed logical width for all game math
-        const LOGICAL_HEIGHT = 700; // The fixed logical height for all game math
-        const BIRD_RADIUS = 15;
+        const LOGICAL_WIDTH = 480; 
+        const LOGICAL_HEIGHT = 700; 
+        const BIRD_RADIUS = 15; // Still used for collision, not drawing size
         const PIPE_WIDTH = 50;
         const PIPE_GAP = 150;
         const PIPE_SPEED = 2;
         const GRAVITY = 0.5;
         const JUMP_VELOCITY = -8;
-        const PIPE_SPAWN_INTERVAL = 100; // Frames
+        const PIPE_SPAWN_INTERVAL = 100; 
         const HIGH_SCORE_KEY = 'flappyHighScore';
 
         // --- Game State ---
@@ -252,12 +259,7 @@
             highScore = storedScore ? parseInt(storedScore, 10) : 0;
         }
 
-        /**
-         * Sets the internal canvas dimensions for drawing purposes.
-         * The game logic always uses LOGICAL_WIDTH and LOGICAL_HEIGHT.
-         */
         function resizeCanvas() {
-            // Set fixed logical dimensions for the drawing context
             canvas.width = LOGICAL_WIDTH;
             canvas.height = LOGICAL_HEIGHT;
         }
@@ -271,26 +273,39 @@
                 this.x = x;
                 this.y = y;
                 this.velocity = 0;
-                this.radius = BIRD_RADIUS;
+                this.radius = BIRD_RADIUS; // Collision radius remains
             }
 
             draw() {
-                ctx.fillStyle = '#f1c40f'; 
+                // --- BIGFOOT DRAWING ---
+                const bigfootColor = '#614833'; // Brown
+                const footColor = '#4a382a'; // Darker brown for feet/hands
+
+                // Body (main rectangle)
+                ctx.fillStyle = bigfootColor;
+                ctx.fillRect(this.x - 10, this.y - 15, 20, 30); // Body
+
+                // Head (circle on top of body)
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.arc(this.x, this.y - 15, 10, 0, Math.PI * 2); // Head
                 ctx.fill();
 
+                // Arms (simple rectangles)
+                ctx.fillRect(this.x - 18, this.y - 10, 8, 15); // Left arm
+                ctx.fillRect(this.x + 10, this.y - 10, 8, 15); // Right arm
+
+                // Feet (simple rectangles or rounded shapes)
+                ctx.fillStyle = footColor;
+                ctx.fillRect(this.x - 8, this.y + 15, 8, 5); // Left foot
+                ctx.fillRect(this.x + 0, this.y + 15, 8, 5); // Right foot
+
+                // Simple eye (optional)
                 ctx.fillStyle = '#000';
                 ctx.beginPath();
-                ctx.arc(this.x + this.radius / 2.5, this.y - this.radius / 4, this.radius / 5, 0, Math.PI * 2);
+                ctx.arc(this.x + 3, this.y - 18, 2, 0, Math.PI * 2);
                 ctx.fill();
 
-                ctx.fillStyle = '#e67e22'; 
-                ctx.beginPath();
-                ctx.moveTo(this.x + this.radius, this.y - 5);
-                ctx.lineTo(this.x + this.radius + 10, this.y);
-                ctx.lineTo(this.x + this.radius, this.y + 5);
-                ctx.fill();
+                // --- END BIGFOOT DRAWING ---
             }
 
             update() {
@@ -317,16 +332,13 @@
             draw() {
                 ctx.fillStyle = '#2ecc71'; 
                 
-                // Top Pipe
                 ctx.fillRect(this.x, 0, this.width, this.gapY - this.gap / 2);
-                // Bottom Pipe
                 ctx.fillRect(this.x, this.gapY + this.gap / 2, this.width, LOGICAL_HEIGHT - (this.gapY + this.gap / 2));
 
-                // Add pipe border/shadow
                 ctx.strokeStyle = '#16a085';
                 ctx.lineWidth = 3;
                 ctx.strokeRect(this.x, 0, this.width, this.gapY - this.gap / 2);
-                ctx.strokeRect(this.x, this.gapY + this.gap / 2, this.width, LOGICAL_HEIGHT - (this.gapY + this.gap / 2));
+                ctx.strokeRect(this.x, this.gapY + this.gap / 2, this.width, LOGICAL_HEIGHT - (this.gapY + self.gap / 2));
             }
 
             update() {
@@ -347,15 +359,13 @@
         }
 
         function checkCollisions() {
-            const floorThreshold = LOGICAL_HEIGHT - 90; // 90 is floor height
+            const floorThreshold = LOGICAL_HEIGHT - 90; 
 
-            // 1. Check top/bottom collision
             if (bird.y - bird.radius <= 0 || bird.y + bird.radius >= floorThreshold) { 
                 endGame();
                 return;
             }
 
-            // 2. Check pipe collision
             for (let i = 0; i < pipes.length; i++) {
                 const p = pipes[i];
 
@@ -368,7 +378,6 @@
                         return;
                     }
 
-                    // Check for scoring
                     if (!p.passed && bird.x > p.x + p.width) {
                         score++;
                         p.passed = true;
@@ -380,7 +389,7 @@
 
         function spawnPipe() {
             const minGapY = 150;
-            const maxGapY = LOGICAL_HEIGHT - 150 - 90; // -90 for floor height
+            const maxGapY = LOGICAL_HEIGHT - 150 - 90; 
 
             const randomGapY = Math.floor(Math.random() * (maxGapY - minGapY + 1)) + minGapY;
             pipes.push(new Pipe(LOGICAL_WIDTH, randomGapY));
@@ -449,7 +458,6 @@
             frameCount = 0;
             scoreDisplay.textContent = score;
             pipes = [];
-            // Use LOGICAL dimensions for placement
             bird = new Bird(LOGICAL_WIDTH / 4, LOGICAL_HEIGHT / 2); 
             
             highScoreDisplaySpan.textContent = highScore; 
