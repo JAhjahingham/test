@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bird Flapping Sim</title>
+    <title>Flappy Bird Clone</title>
     <style>
         /* Base styling and font */
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -21,7 +21,7 @@
             overflow: hidden; /* Prevent scrolling */
         }
 
-        /* ------------------ ADJUSTED AD BANNER STYLES ------------------ */
+        /* ------------------ ADJUSTED AD BANNER STYLES (PC/DEFAULT) ------------------ */
         #ad-banner {
             width: 95%; /* Slightly smaller relative width */
             max-width: 400px; /* Reduced maximum desktop width */
@@ -50,9 +50,8 @@
         #ad-banner strong {
             display: block;
             font-size: 1.0em;
-            /* --- CHANGED COLOR TO GREEN --- */
-            color: #2ecc71; /* Bright Green, matching pipes */
-            /* ------------------------------ */
+            /* GREEN FOR PC/DEFAULT */
+            color: #2ecc71; 
             text-shadow: 1px 1px 0px #1c2833;
             margin: 2px 0;
         }
@@ -164,6 +163,8 @@
             }
             #ad-banner strong {
                 font-size: 0.8em;
+                /* REPEAT GREEN COLOR FOR MOBILE OVERRIDE */
+                color: #2ecc71; 
             }
             #score-display {
                 font-size: 2em;
