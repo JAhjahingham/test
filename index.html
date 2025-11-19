@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flappy Bigfoot</title>
-    <style>
+    <title>Flappy Bigfoot</title> <style>
         /* Base styling and font */
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
@@ -235,7 +234,7 @@
         // --- Game Constants ---
         const LOGICAL_WIDTH = 480; 
         const LOGICAL_HEIGHT = 700; 
-        const BIRD_RADIUS = 15; 
+        const BIRD_RADIUS = 15; // Still used for collision, not drawing size
         const PIPE_WIDTH = 50;
         const PIPE_GAP = 150;
         const PIPE_SPEED = 2;
@@ -243,23 +242,6 @@
         const JUMP_VELOCITY = -8;
         const PIPE_SPAWN_INTERVAL = 100; 
         const HIGH_SCORE_KEY = 'flappyHighScore';
-
-        // --- Image for the Bird ---
-        const bigfootImage = new Image();
-        // **CORRECTED:** Using the correct file URL for the uploaded image
-        bigfootImage.src = 'Gemini_Generated_Image_eueameeueameeuea.jpg-7c2a5da0-acf0-4f83-9ece-968e26cb5440';
-        
-        // Define the dimensions the image will be drawn at
-        const bigfootSize = 40; 
-        
-        // Flag to ensure the game doesn't start until the image is loaded
-        let imageLoaded = false;
-        bigfootImage.onload = () => {
-            imageLoaded = true;
-            console.log("Bigfoot image loaded.");
-            // Only call resetGame() once the image is ready
-            resetGame();
-        };
 
         // --- Game State ---
         let bird;
@@ -291,25 +273,39 @@
                 this.x = x;
                 this.y = y;
                 this.velocity = 0;
-                this.radius = BIRD_RADIUS; 
+                this.radius = BIRD_RADIUS; // Collision radius remains
             }
 
             draw() {
-                if (imageLoaded) {
-                    // Draw the Bigfoot image centered on the bird's collision point (this.x, this.y)
-                    // The image is drawn from the top-left corner, so we subtract half the size from x and y
-                    const drawX = this.x - bigfootSize / 2;
-                    const drawY = this.y - bigfootSize / 2;
+                // --- BIGFOOT DRAWING ---
+                const bigfootColor = '#614833'; // Brown
+                const footColor = '#4a382a'; // Darker brown for feet/hands
 
-                    // Draw the image
-                    ctx.drawImage(bigfootImage, drawX, drawY, bigfootSize, bigfootSize);
-                } else {
-                    // Fallback (should not happen after onload)
-                    ctx.fillStyle = 'black'; 
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    ctx.fill();
-                }
+                // Body (main rectangle)
+                ctx.fillStyle = bigfootColor;
+                ctx.fillRect(this.x - 10, this.y - 15, 20, 30); // Body
+
+                // Head (circle on top of body)
+                ctx.beginPath();
+                ctx.arc(this.x, this.y - 15, 10, 0, Math.PI * 2); // Head
+                ctx.fill();
+
+                // Arms (simple rectangles)
+                ctx.fillRect(this.x - 18, this.y - 10, 8, 15); // Left arm
+                ctx.fillRect(this.x + 10, this.y - 10, 8, 15); // Right arm
+
+                // Feet (simple rectangles or rounded shapes)
+                ctx.fillStyle = footColor;
+                ctx.fillRect(this.x - 8, this.y + 15, 8, 5); // Left foot
+                ctx.fillRect(this.x + 0, this.y + 15, 8, 5); // Right foot
+
+                // Simple eye (optional)
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(this.x + 3, this.y - 18, 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // --- END BIGFOOT DRAWING ---
             }
 
             update() {
@@ -341,8 +337,8 @@
 
                 ctx.strokeStyle = '#16a085';
                 ctx.lineWidth = 3;
-                ctx.strokeRect(this.x, 0, this.width, this.gapY - self.gap / 2);
-                ctx.strokeRect(this.x, this.gapY + self.gap / 2, this.width, LOGICAL_HEIGHT - (this.gapY + self.gap / 2));
+                ctx.strokeRect(this.x, 0, this.width, this.gapY - this.gap / 2);
+                ctx.strokeRect(this.x, this.gapY + this.gap / 2, this.width, LOGICAL_HEIGHT - (this.gapY + self.gap / 2));
             }
 
             update() {
@@ -457,8 +453,6 @@
         }
 
         function resetGame() {
-            if (!imageLoaded) return; // Prevent reset until image is ready
-
             isGameOver = false;
             score = 0;
             frameCount = 0;
@@ -500,7 +494,7 @@
         window.onload = function() {
             resizeCanvas();
             loadHighScore(); 
-            // resetGame is now called inside bigfootImage.onload
+            resetGame(); 
         };
 
     </script>
