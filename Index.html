@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3310 Composer + DTMF</title>
+    <style>
+        :root {
+            --nokia-green: #9da179;
+            --nokia-dark: #222b15;
+            --case-color: #3b4e6b;
+        }
+
+        body { 
+            background: #1a1a1a; 
+            font-family: 'Courier New', monospace; 
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        #phone { 
+            width: 90%;
+            max-width: 360px;
+            background: var(--case-color);
+            border-radius: 40px;
+            padding: 30px 20px;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.2), 0 20px 40px rgba(0,0,0,0.5);
+            border: 4px solid #222;
+        }
+
+        #screen-border {
+            background: #222;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        #screen { 
+            background: var(--nokia-green); 
+            height: 100px; 
+            border-radius: 5px;
+            padding: 10px; 
+            color: var(--nokia-dark); 
+            overflow-y: auto; 
+            font-weight: bold; 
+            font-size: 1.1rem;
+            line-height: 1.4;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3);
+            word-wrap: break-word;
+        }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; 
+        }
+
+        button { 
+            height: 60px; 
+            background: #e0e0e0; 
+            color: #333; 
+            border: none; 
+            border-radius: 50% 50% 45% 45%; 
+            cursor: pointer; 
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 4px #999, 0 6px 10px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:active { 
+            box-shadow: 0 1px #666;
+            transform: translateY(3px);
+            background: #ccc;
+        }
+
+        .controls { 
+            margin-top: 30px; 
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+        }
+
+        #playback { background: #5a9151; color: white; border-radius: 20px; height: 50px; box-shadow: 0 4px #2d4a28; }
+        #clear { background: #b33939; color: white; border-radius: 20px; height: 50px; box-shadow: 0 4px #5d1a1a; }
+        .label { font-size: 0.7rem; display: block; color: #666; }
+    </style>
+</head>
+<body>
+
+    <div id="phone">
+        <div id="screen-border">
+            <div id="screen">
+                <div id="display-text">Composer</div>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <button onmousedown="handlePress('1', 'c')" ontouchstart="handlePress('1', 'c')">1<span class="label">C</span></button>
+            <button onmousedown="handlePress('2', 'd')" ontouchstart="handlePress('2', 'd')">2<span class="label">D</span></button>
+            <button onmousedown="handlePress('3', 'e')" ontouchstart="handlePress('3', 'e')">3<span class="label">E</span></button>
+            <button onmousedown="handlePress('4', 'f')" ontouchstart="handlePress('4', 'f')">4<span class="label">F</span></button>
+            <button onmousedown="handlePress('5', 'g')" ontouchstart="handlePress('5', 'g')">5<span class="label">G</span></button>
+            <button onmousedown="handlePress('6', 'a')" ontouchstart="handlePress('6', 'a')">6<span class="label">A</span></button>
+            <button onmousedown="handlePress('7', 'b')" ontouchstart="handlePress('7', 'b')">7<span class="label">B</span></button>
+            <button onmousedown="handlePress('8')" ontouchstart="handlePress('8')">8<span class="label">DUR</span></button>
+            <button onmousedown="handlePress('9')" ontouchstart="handlePress('9')">9<span class="label">DUR</span></button>
+            <button onmousedown="handlePress('*')" ontouchstart="handlePress('*')">*<span class="label">OCT</span></button>
+            <button onmousedown="handlePress('0', 'p')" ontouchstart="handlePress('0', 'p')">0<span class="label">REST</span></button>
+            <button onmousedown="handlePress('#')" ontouchstart="handlePress('#')">#<span class="label">#</span></button>
+        </div>
+        
+        <div class="controls">
+            <button id="playback" onclick="playMelody()">▶ PLAY</button>
+            <button id="clear" onclick="clearNotes()">CLR</button>
+        </div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let melody = []; 
+        let currentDuration = 8;
+        let currentOctave = 1;
+
+        // DTMF Frequencies (Row + Column)
+        const dtmfFrequencies = {
+            '1': [697, 1209], '2': [697, 1336], '3': [697, 1477],
+            '4': [770, 1209], '5': [770, 1336], '6': [770, 1477],
+            '7': [852, 1209], '8': [852, 1336], '9': [852, 1477],
+            '*': [941, 1209], '0': [941, 1336], '#': [941, 1477]
+        };
+
+        const noteFrequencies = {
+            'c': 261.63, 'c#': 277.18, 'd': 293.66, 'd#': 311.13, 'e': 329.63, 
+            'f': 349.23, 'f#': 369.99, 'g': 392.00, 'g#': 415.30, 'a': 440.00, 
+            'a#': 466.16, 'b': 493.88, 'p': 0
+        };
+
+        function playDTMF(digit) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const freqs = dtmfFrequencies[digit];
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc1.frequency.value = freqs[0];
+            osc2.frequency.value = freqs[1];
+            osc1.type = osc2.type = 'sine';
+
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+
+            osc1.connect(gain); osc2.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc1.start(); osc2.start();
+            osc1.stop(audioCtx.currentTime + 0.1); osc2.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function handlePress(digit, note) {
+            event.preventDefault(); // Prevents double firing on mobile
+            playDTMF(digit);
+            
+            if (note) {
+                melody.push({ note: note, duration: currentDuration, octave: currentOctave, sharp: false });
+            } else if (digit === '8' || digit === '9') {
+                const durations = [4, 8, 16, 32];
+                currentDuration = durations[(durations.indexOf(currentDuration) + 1) % durations.length];
+                if (melody.length > 0) melody[melody.length-1].duration = currentDuration;
+            } else if (digit === '*') {
+                currentOctave = currentOctave === 3 ? 1 : currentOctave + 1;
+                if (melody.length > 0) melody[melody.length-1].octave = currentOctave;
+            } else if (digit === '#') {
+                if (melody.length > 0 && melody[melody.length-1].note !== 'p') {
+                    melody[melody.length-1].sharp = !melody[melody.length-1].sharp;
+                }
+            }
+            updateScreen();
+        }
+
+        function updateScreen() {
+            const display = document.getElementById('display-text');
+            display.innerText = melody.length > 0 ? 
+                melody.map(m => `${m.duration}${m.note}${m.sharp ? '#' : ''}${m.octave}`).join(' ') : 
+                "Composer";
+            display.parentElement.scrollTop = display.parentElement.scrollHeight;
+        }
+
+        function clearNotes() { melody = []; updateScreen(); }
+
+        function beepNote(m) {
+            if (m.note === 'p') return;
+            let freq = noteFrequencies[m.note + (m.sharp ? '#' : '')] * Math.pow(2, m.octave - 1);
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (2 / m.duration));
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + (2 / m.duration));
+        }
+
+        async function playMelody() {
+            for (let m of melody) {
+                beepNote(m);
+                await new Promise(r => setTimeout(r, (2000 / m.duration)));
+            }
+        }
+    </script>
+</body>
+</html>
