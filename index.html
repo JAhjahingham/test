@@ -2,217 +2,379 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>3310 Composer + DTMF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Flappy Clone</title>
     <style>
-        :root {
-            --nokia-green: #9da179;
-            --nokia-dark: #222b15;
-            --case-color: #3b4e6b;
-        }
-
-        body { 
-            background: #1a1a1a; 
-            font-family: 'Courier New', monospace; 
+        body {
             margin: 0;
+            padding: 0;
+            background-color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            font-family: 'Arial', sans-serif;
             overflow: hidden;
-            touch-action: manipulation;
         }
 
-        #phone { 
-            width: 90%;
-            max-width: 360px;
-            background: var(--case-color);
-            border-radius: 40px;
-            padding: 30px 20px;
-            box-shadow: inset 0 0 15px rgba(255,255,255,0.2), 0 20px 40px rgba(0,0,0,0.5);
-            border: 4px solid #222;
+        #gameContainer {
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
-        #screen-border {
-            background: #222;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 30px;
+        canvas {
+            background-color: #70c5ce; /* Sky blue */
+            display: block;
+            border-radius: 4px;
         }
 
-        #screen { 
-            background: var(--nokia-green); 
-            height: 100px; 
-            border-radius: 5px;
-            padding: 10px; 
-            color: var(--nokia-dark); 
-            overflow-y: auto; 
-            font-weight: bold; 
-            font-size: 1.1rem;
-            line-height: 1.4;
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3);
-            word-wrap: break-word;
+        #uiLayer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Let clicks pass through to canvas */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 12px; 
-        }
-
-        button { 
-            height: 60px; 
-            background: #e0e0e0; 
-            color: #333; 
-            border: none; 
-            border-radius: 50% 50% 45% 45%; 
-            cursor: pointer; 
-            font-size: 0.9rem;
+        .score-board {
+            position: absolute;
+            top: 10%;
+            font-size: 40px;
             font-weight: bold;
-            box-shadow: 0 4px #999, 0 6px 10px rgba(0,0,0,0.4);
-            transition: all 0.1s;
-            -webkit-tap-highlight-color: transparent;
+            color: white;
+            text-shadow: 2px 2px 0 #000;
+            z-index: 10;
         }
 
-        button:active { 
-            box-shadow: 0 1px #666;
-            transform: translateY(3px);
-            background: #ccc;
+        #startScreen, #gameOverScreen {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            pointer-events: auto; /* Re-enable clicks for buttons */
         }
 
-        .controls { 
-            margin-top: 30px; 
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 10px;
+        h1 {
+            color: white;
+            margin-top: 0;
+            font-size: 36px;
         }
 
-        #playback { background: #5a9151; color: white; border-radius: 20px; height: 50px; box-shadow: 0 4px #2d4a28; }
-        #clear { background: #b33939; color: white; border-radius: 20px; height: 50px; box-shadow: 0 4px #5d1a1a; }
-        .label { font-size: 0.7rem; display: block; color: #666; }
+        p {
+            color: #fff;
+            font-size: 18px;
+        }
+
+        button {
+            background-color: #f4a261;
+            border: 2px solid #fff;
+            color: #222;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #e76f51;
+        }
+
+        #gameOverScreen.hidden {
+            display: none;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
 
-    <div id="phone">
-        <div id="screen-border">
-            <div id="screen">
-                <div id="display-text">Composer</div>
+    <div id="gameContainer">
+        <canvas id="birdCanvas" width="320" height="480"></canvas>
+        
+        <div id="uiLayer">
+            <div class="score-board">0</div>
+            
+            <div id="startScreen">
+                <h1>Flappy</h1>
+                <p>Click or Space to Start</p>
+                <button onclick="startGame()">Start Game</button>
             </div>
-        </div>
-        
-        <div class="grid">
-            <button onmousedown="handlePress('1', 'c')" ontouchstart="handlePress('1', 'c')">1<span class="label">C</span></button>
-            <button onmousedown="handlePress('2', 'd')" ontouchstart="handlePress('2', 'd')">2<span class="label">D</span></button>
-            <button onmousedown="handlePress('3', 'e')" ontouchstart="handlePress('3', 'e')">3<span class="label">E</span></button>
-            <button onmousedown="handlePress('4', 'f')" ontouchstart="handlePress('4', 'f')">4<span class="label">F</span></button>
-            <button onmousedown="handlePress('5', 'g')" ontouchstart="handlePress('5', 'g')">5<span class="label">G</span></button>
-            <button onmousedown="handlePress('6', 'a')" ontouchstart="handlePress('6', 'a')">6<span class="label">A</span></button>
-            <button onmousedown="handlePress('7', 'b')" ontouchstart="handlePress('7', 'b')">7<span class="label">B</span></button>
-            <button onmousedown="handlePress('8')" ontouchstart="handlePress('8')">8<span class="label">DUR</span></button>
-            <button onmousedown="handlePress('9')" ontouchstart="handlePress('9')">9<span class="label">DUR</span></button>
-            <button onmousedown="handlePress('*')" ontouchstart="handlePress('*')">*<span class="label">OCT</span></button>
-            <button onmousedown="handlePress('0', 'p')" ontouchstart="handlePress('0', 'p')">0<span class="label">REST</span></button>
-            <button onmousedown="handlePress('#')" ontouchstart="handlePress('#')">#<span class="label">#</span></button>
-        </div>
-        
-        <div class="controls">
-            <button id="playback" onclick="playMelody()">▶ PLAY</button>
-            <button id="clear" onclick="clearNotes()">CLR</button>
+
+            <div id="gameOverScreen" class="hidden">
+                <h1>Game Over!</h1>
+                <p>Score: <span id="finalScore">0</span></p>
+                <p>Best: <span id="bestScore">0</span></p>
+                <button onclick="resetGame()">Play Again</button>
+            </div>
         </div>
     </div>
 
     <script>
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let melody = []; 
-        let currentDuration = 8;
-        let currentOctave = 1;
+        // --- SETUP ---
+        const canvas = document.getElementById("birdCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        // UI Elements
+        const scoreElement = document.querySelector(".score-board");
+        const startScreen = document.getElementById("startScreen");
+        const gameOverScreen = document.getElementById("gameOverScreen");
+        const finalScoreElement = document.getElementById("finalScore");
+        const bestScoreElement = document.getElementById("bestScore");
 
-        // DTMF Frequencies (Row + Column)
-        const dtmfFrequencies = {
-            '1': [697, 1209], '2': [697, 1336], '3': [697, 1477],
-            '4': [770, 1209], '5': [770, 1336], '6': [770, 1477],
-            '7': [852, 1209], '8': [852, 1336], '9': [852, 1477],
-            '*': [941, 1209], '0': [941, 1336], '#': [941, 1477]
+        // --- GAME VARIABLES ---
+        let frames = 0;
+        let score = 0;
+        let isGameOver = false;
+        let isPlaying = false;
+        const gravity = 0.25;
+        const speed = 2; // Horizontal movement speed
+        const pipeGap = 120; // Space between pipes
+
+        // --- OBJECTS ---
+
+        const bird = {
+            x: 50,
+            y: 150,
+            w: 25,
+            h: 25,
+            radius: 12,
+            velocity: 0,
+            jump: 4.6,
+            draw: function() {
+                ctx.fillStyle = "#FFD700"; // Gold color
+                ctx.beginPath();
+                ctx.arc(this.x + this.w/2, this.y + this.h/2, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Eye
+                ctx.fillStyle = "#FFF";
+                ctx.beginPath();
+                ctx.arc(this.x + this.w/2 + 5, this.y + this.h/2 - 5, 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = "#000";
+                ctx.beginPath();
+                ctx.arc(this.x + this.w/2 + 7, this.y + this.h/2 - 5, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            },
+            update: function() {
+                // Apply gravity
+                this.velocity += gravity;
+                this.y += this.velocity;
+
+                // Floor Collision
+                if (this.y + this.h >= canvas.height) {
+                    this.y = canvas.height - this.h;
+                    gameOver();
+                }
+                
+                // Ceiling Collision (optional)
+                if (this.y < 0) {
+                    this.y = 0;
+                    this.velocity = 0;
+                }
+            },
+            flap: function() {
+                this.velocity = -this.jump;
+            },
+            reset: function() {
+                this.y = 150;
+                this.velocity = 0;
+                this.x = canvas.width / 2 - this.w / 2;
+            }
         };
 
-        const noteFrequencies = {
-            'c': 261.63, 'c#': 277.18, 'd': 293.66, 'd#': 311.13, 'e': 329.63, 
-            'f': 349.23, 'f#': 369.99, 'g': 392.00, 'g#': 415.30, 'a': 440.00, 
-            'a#': 466.16, 'b': 493.88, 'p': 0
+        const pipes = {
+            position: [],
+            w: 50,
+            h: 400, // Max height of a single pipe segment
+            gap: pipeGap,
+            dx: 2,
+            draw: function() {
+                for(let i = 0; i < this.position.length; i++) {
+                    let p = this.position[i];
+                    let topY = p.y;
+                    let bottomY = p.y + this.h + this.gap;
+
+                    ctx.fillStyle = "#228B22"; // Green
+
+                    // Top Pipe
+                    ctx.fillRect(p.x, 0, this.w, topY);
+                    // Top Pipe Cap
+                    ctx.fillRect(p.x - 2, topY - 20, this.w + 4, 20);
+
+                    // Bottom Pipe
+                    ctx.fillRect(p.x, bottomY, this.w, canvas.height - bottomY);
+                    // Bottom Pipe Cap
+                    ctx.fillRect(p.x - 2, bottomY, this.w + 4, 20);
+                }
+            },
+            update: function() {
+                // Add new pipes every 100 frames
+                if(frames % 100 === 0) {
+                    this.position.push({
+                        x: canvas.width,
+                        y: Math.random() * (canvas.height - this.gap - 100) + 50
+                    });
+                }
+
+                for(let i = 0; i < this.position.length; i++) {
+                    let p = this.position[i];
+                    p.x -= this.dx; // Move pipe left
+
+                    // Collision Detection
+                    let birdLeft = bird.x + bird.w/2 - 5;
+                    let birdRight = bird.x + bird.w/2 + 5;
+                    let birdTop = bird.y + bird.h/2 - 5;
+                    let birdBottom = bird.y + bird.h/2 + 5;
+
+                    // Pipe Bounds
+                    if(birdRight > p.x && birdLeft < p.x + this.w &&
+                       (birdTop < p.y || birdBottom > p.y + this.h)) {
+                        gameOver();
+                    }
+
+                    // Score update
+                    if(p.x + this.w < birdLeft && !p.passed) {
+                        score++;
+                        scoreElement.innerText = score;
+                        p.passed = true;
+                    }
+
+                    // Remove off-screen pipes
+                    if(p.x + this.w < 0) {
+                        this.position.shift();
+                        i--;
+                    }
+                }
+            },
+            reset: function() {
+                this.position = [];
+            }
         };
 
-        function playDTMF(digit) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const freqs = dtmfFrequencies[digit];
-            const osc1 = audioCtx.createOscillator();
-            const osc2 = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-
-            osc1.frequency.value = freqs[0];
-            osc2.frequency.value = freqs[1];
-            osc1.type = osc2.type = 'sine';
-
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
-
-            osc1.connect(gain); osc2.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            osc1.start(); osc2.start();
-            osc1.stop(audioCtx.currentTime + 0.1); osc2.stop(audioCtx.currentTime + 0.1);
+        const background = {
+            draw: function() {
+                ctx.fillStyle = "#70c5ce";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw ground
+                ctx.fillStyle = "#ded895";
+                ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
+                ctx.fillStyle = "#73bf2e"; // Grass color
+                ctx.fillRect(0, canvas.height - 25, canvas.width, 5);
+            }
         }
 
-        function handlePress(digit, note) {
-            event.preventDefault(); // Prevents double firing on mobile
-            playDTMF(digit);
+        // --- GAME LOOP ---
+
+        function loop() {
+            // 1. Clear Canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 2. Draw Background (optional, handled by draw)
+            background.draw();
+
+            // 3. Update and Draw Objects
+            if (isPlaying) {
+                bird.update();
+                pipes.update();
+                frames++;
+            }
+
+            bird.draw();
+            pipes.draw();
+
+            requestAnimationFrame(loop);
+        }
+
+        // --- CONTROLS & STATE ---
+
+        function startGame() {
+            startScreen.classList.add("hidden");
+            gameOverScreen.classList.add("hidden");
+            resetState();
+            isPlaying = true;
+            bird.flap(); // Start with a jump
+        }
+
+        function gameOver() {
+            isGameOver = true;
+            isPlaying = false;
+            finalScoreElement.innerText = score;
+            bestScoreElement.innerText = Math.max(score, parseInt(localStorage.getItem('flappy_best'))) || 0;
+            gameOverScreen.classList.remove("hidden");
+        }
+
+        function resetState() {
+            bird.reset();
+            pipes.reset();
+            score = 0;
+            frames = 0;
+            scoreElement.innerText = "0";
+            isGameOver = false;
+            isPlaying = true;
+        }
+
+        function resetGame() {
+            startGame();
+        }
+
+        function updateScore() {
+            // Only update score if game is actually running to prevent jumps
+            if(isPlaying) score++;
+            scoreElement.innerText = score;
+        }
+
+        function loop() {
+            if (isGameOver) {
+                // Draw final frame just to lock the screen
+                bird.draw();
+                pipes.draw();
+                return; 
+            }
             
-            if (note) {
-                melody.push({ note: note, duration: currentDuration, octave: currentOctave, sharp: false });
-            } else if (digit === '8' || digit === '9') {
-                const durations = [4, 8, 16, 32];
-                currentDuration = durations[(durations.indexOf(currentDuration) + 1) % durations.length];
-                if (melody.length > 0) melody[melody.length-1].duration = currentDuration;
-            } else if (digit === '*') {
-                currentOctave = currentOctave === 3 ? 1 : currentOctave + 1;
-                if (melody.length > 0) melody[melody.length-1].octave = currentOctave;
-            } else if (digit === '#') {
-                if (melody.length > 0 && melody[melody.length-1].note !== 'p') {
-                    melody[melody.length-1].sharp = !melody[melody.length-1].sharp;
+            loop();
+            updateScore();
+        }
+
+        // --- EVENT LISTENERS ---
+
+        // Mouse Click
+        window.addEventListener('mousedown', () => {
+            if (isPlaying) bird.flap();
+        });
+
+        // Touch / Swipe
+        window.addEventListener('touchstart', (e) => {
+            if (isPlaying) bird.flap();
+        }, {passive: false});
+
+        // Keyboard
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                if (!isPlaying && !isGameOver) {
+                    startGame();
+                } else if (isPlaying) {
+                    bird.flap();
                 }
             }
-            updateScreen();
-        }
+        });
 
-        function updateScreen() {
-            const display = document.getElementById('display-text');
-            display.innerText = melody.length > 0 ? 
-                melody.map(m => `${m.duration}${m.note}${m.sharp ? '#' : ''}${m.octave}`).join(' ') : 
-                "Composer";
-            display.parentElement.scrollTop = display.parentElement.scrollHeight;
-        }
+        // --- INITIAL VISIBILITY ---
+        // Make canvas visible immediately so it doesn't look blank
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        background.draw();
 
-        function clearNotes() { melody = []; updateScreen(); }
-
-        function beepNote(m) {
-            if (m.note === 'p') return;
-            let freq = noteFrequencies[m.note + (m.sharp ? '#' : '')] * Math.pow(2, m.octave - 1);
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'square';
-            osc.frequency.value = freq;
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (2 / m.duration));
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + (2 / m.duration));
-        }
-
-        async function playMelody() {
-            for (let m of melody) {
-                beepNote(m);
-                await new Promise(r => setTimeout(r, (2000 / m.duration)));
-            }
-        }
     </script>
 </body>
 </html>
